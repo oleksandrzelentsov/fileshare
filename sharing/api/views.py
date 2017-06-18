@@ -57,7 +57,7 @@ class ShareableFileView(View):
                 })
                 return_code = 404
             else:
-                response_data['image'] = obj.as_json()
+                response_data['file'] = obj.as_json()
         return JsonResponse(data=response_data, status=return_code)
 
     def delete(self, request, file_id):
@@ -105,11 +105,13 @@ class ShareableFilesView(View):
             return JsonResponse(data={
                 'status': 'not authorized',
             }, status=401)
-        request_json = json.loads(request.body)
+        if len(request.FILES.keys()) != 1:
+            return JsonResponse(data={
+                'status': 'you have to send 1 file',
+            }, status=400)
         filename = request.FILES['file'].name
-        obj = ShareableFile(file=request.FILES['file'], name=filename, user=request.user,
-                            public=('public' in request_json and
-                                    request_json.get('public')))
+        public = bool(int(request.POST.get('public')))
+        obj = ShareableFile(file=request.FILES['file'], name=filename, user=request.user, public=public)
         obj.save()
         response_json = {'status': 'ok'}
         response_json.update(obj.as_json())

@@ -3,13 +3,13 @@ import hashlib
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import FileField, CharField
+from django.db.models import FileField, CharField, Model
 from django.urls import reverse
 
 from files.settings import UPLOADED_FILES_DIR
 
 
-class ShareableFile(models.Model):
+class ShareableFile(Model):
     file = FileField(upload_to=UPLOADED_FILES_DIR)
     name = CharField(max_length=64)
     hash = CharField(max_length=40, unique=True, blank=True)
@@ -36,6 +36,7 @@ class ShareableFile(models.Model):
         return super(ShareableFile, self).delete(*args, **kwargs)
 
     def save(self, *args, **kwargs):
+        super(ShareableFile, self).save(*args, **kwargs)
         if not self.name:
             self.name = os.path.basename(self.file.name)
         if not self.hash:
