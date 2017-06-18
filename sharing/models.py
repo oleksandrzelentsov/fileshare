@@ -30,6 +30,11 @@ class ShareableFile(models.Model):
         ).encode()
         return hashlib.sha1(hash_str).hexdigest()
 
+    def delete(self, *args, **kwargs):
+        if os.path.isfile(self.file.path):
+            os.remove(self.file.path)
+        return super(ShareableFile, self).delete(*args, **kwargs)
+
     def save(self, *args, **kwargs):
         if not self.name:
             self.name = os.path.basename(self.file.name)
@@ -39,3 +44,11 @@ class ShareableFile(models.Model):
 
     def get_raw_url(self):
         return reverse('raw', kwargs={'file_hash': self.hash})
+
+    def as_json(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'url': self.get_raw_url(),
+            'public': self.public,
+        }

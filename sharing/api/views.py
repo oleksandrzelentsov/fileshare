@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth import logout, authenticate, login
 from django.http import JsonResponse
 from django.views import View
@@ -39,7 +41,7 @@ class ShareableFileView(View):
         }
         return_code = 200
 
-        if self.request.user.is_anonymous():
+        if request.user.is_anonymous():
             response_data.update({
                 'status': 'not authorized',
             })
@@ -47,7 +49,7 @@ class ShareableFileView(View):
         else:
             try:
                 obj = ShareableFile.objects.get(pk=file_id)
-                if obj.user != self.request.user and not obj.public:
+                if obj.user != request.user and not obj.public:
                     raise ShareableFile.DoesNotExist
             except ShareableFile.DoesNotExist:
                 response_data.update({
@@ -55,12 +57,7 @@ class ShareableFileView(View):
                 })
                 return_code = 404
             else:
-                response_data['image'] = {
-                    'id': obj.id,
-                    'name': obj.name,
-                    'url': obj.get_raw_url(),
-                    'public': obj.public,
-                }
+                response_data['image'] = obj.as_json()
         return JsonResponse(data=response_data, status=return_code)
 
     def delete(self, request, file_id):
@@ -69,7 +66,7 @@ class ShareableFileView(View):
         }
         return_code = 200
 
-        if self.request.user.is_anonymous():
+        if request.user.is_anonymous():
             response_data.update({
                 'status': 'not authorized',
             })
@@ -77,7 +74,7 @@ class ShareableFileView(View):
         else:
             try:
                 obj = ShareableFile.objects.get(pk=file_id)
-                if obj.user != self.request.user:
+                if obj.user != request.user:
                     raise ShareableFile.DoesNotExist
             except ShareableFile.DoesNotExist:
                 response_data.update({
@@ -87,3 +84,33 @@ class ShareableFileView(View):
             else:
                 obj.delete()
         return JsonResponse(data=response_data, status=return_code)
+
+
+class ShareableFilesView(View):
+    def get(self, request):
+        if request.user.is_anonymous():
+            return JsonResponse(data={
+                'status': 'not authorized',
+            }, status=401)
+        files = ShareableFile.objects.filter(user=request.user)
+        response_data = {}
+        response_data['files'] = []
+        for file in files:
+            response_data['files'].append(file.as_json())
+        response_data['status'] = 'ok'
+        return JsonResponse(data=response_data)
+
+    def post(self, request):
+        if request.user.is_anonymous():
+            return JsonResponse(data={
+                'status': 'not authorized',
+            }, status=401)
+        request_json = json.loads(request.body)
+        filename = request.FILES['file'].name
+        obj = ShareableFile(file=request.FILES['file'], name=filename, user=request.user,
+                            public=('public' in request_json and
+                                    request_json.get('public')))
+        obj.save()
+        response_json = {'status': 'ok'}
+        response_json.update(obj.as_json())
+        return JsonResponse(data=response_json)
