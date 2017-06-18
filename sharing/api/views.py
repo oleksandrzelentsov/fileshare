@@ -13,49 +13,45 @@ class LoginView(View):
         if not (username and password):
             return JsonResponse(data={
                 'status': 'username and password parameters are required',
-                'return_code': 400
-            })
+            }, status=400)
         user = authenticate(username=username, password=password)
         if user:
             login(request, user)
             return JsonResponse(data={
                 'status': 'ok',
-                'return_code': 200,
-            })
+            }, status=200)
         else:
             return JsonResponse(data={
                 'status': 'wrong authentication data',
-                'return_code': 403,
-            })
+            }, status=403)
 
 
 class ShareableFileView(View):
     def get(self, request, file_id):
         response_data = {
             'status': 'ok',
-            'return_code': 200,
         }
+        return_code = 200
 
         if self.request.user.is_anonymous():
             response_data.update({
                 'status': 'not authorized',
-                'return_code': 401,
             })
+            return_code = 401
         else:
             try:
                 obj = ShareableFile.objects.get(pk=file_id)
-                if obj.user != self.request.user:
+                if obj.user != self.request.user and not obj.public:
                     raise ShareableFile.DoesNotExist
             except ShareableFile.DoesNotExist:
                 response_data.update({
                     'status': "file does not exist or you don't have access to it",
-                    'return_code': 404,
                 })
+                return_code = 404
             else:
                 response_data['image'] = {
                     'id': obj.id,
                     'name': obj.name,
                     'url': obj.get_raw_url()
                 }
-                response_data['return_code'] = 200
-        return JsonResponse(data=response_data)
+        return JsonResponse(data=response_data, status=return_code)

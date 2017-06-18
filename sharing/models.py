@@ -12,8 +12,9 @@ from files.settings import UPLOADED_FILES_DIR
 class ShareableFile(models.Model):
     file = FileField(upload_to=UPLOADED_FILES_DIR)
     name = CharField(max_length=64)
-    hash = CharField(max_length=20, unique=True, blank=True)
+    hash = CharField(max_length=40, unique=True, blank=True)
     user = models.ForeignKey(User)
+    public = models.BooleanField(default=False)
 
     def __str__(self):
         return "[{user} {hash}] {filename}".format(
@@ -37,4 +38,4 @@ class ShareableFile(models.Model):
         return super(ShareableFile, self).save(*args, **kwargs)
 
     def get_raw_url(self):
-        return reverse('raw', kwargs={'hash': self.hash})
+        return reverse('raw', kwargs={'file_hash': self.hash})

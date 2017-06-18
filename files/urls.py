@@ -20,6 +20,6 @@ from sharing.views import FileView
 
 urlpatterns = [
     url(r'^api/', include('sharing.api.urls'), name='api'),
-    url(r'^raw/(?P<hash>[\w\d]{20})', FileView.as_view(), name='raw'),
+    url(r'^file/(?P<file_hash>[\w\d]{40})/$', FileView.as_view(), name='raw'),
     url(r'^admin/', admin.site.urls),
 ]
