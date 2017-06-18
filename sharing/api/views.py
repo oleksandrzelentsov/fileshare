@@ -26,6 +26,12 @@ class LoginView(View):
             }, status=403)
 
 
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return JsonResponse({'status': 'ok'})
+
+
 class ShareableFileView(View):
     def get(self, request, file_id):
         response_data = {
@@ -52,6 +58,32 @@ class ShareableFileView(View):
                 response_data['image'] = {
                     'id': obj.id,
                     'name': obj.name,
-                    'url': obj.get_raw_url()
+                    'url': obj.get_raw_url(),
+                    'public': obj.public,
                 }
+        return JsonResponse(data=response_data, status=return_code)
+
+    def delete(self, request, file_id):
+        response_data = {
+            'status': 'ok',
+        }
+        return_code = 200
+
+        if self.request.user.is_anonymous():
+            response_data.update({
+                'status': 'not authorized',
+            })
+            return_code = 401
+        else:
+            try:
+                obj = ShareableFile.objects.get(pk=file_id)
+                if obj.user != self.request.user:
+                    raise ShareableFile.DoesNotExist
+            except ShareableFile.DoesNotExist:
+                response_data.update({
+                    'status': "file does not exist or you don't have access to it",
+                })
+                return_code = 404
+            else:
+                obj.delete()
         return JsonResponse(data=response_data, status=return_code)
