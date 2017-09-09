@@ -15,10 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from rest_framework.documentation import include_docs_urls
 
 from sharing.views import FileView
 
 urlpatterns = [
+    url(r'^api-auth/', include('rest_framework.urls')),
+    url(r'^docs/', include_docs_urls(title='My API title')),
     url(r'^api/', include('sharing.api.urls'), name='api'),
     url(r'^file/(?P<file_hash>[\w\d]{40})/$', FileView.as_view(), name='raw'),
     url(r'^admin/', admin.site.urls),
