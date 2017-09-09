@@ -38,7 +38,7 @@ DJANGO_SETTINGS_MODULE=files.local_settings python manage.py createsuperuser
 ```
 And answer all the questions.
 
-6. Go to `localhost:8000/admin` in your browser to log into django admin
+7. Go to `localhost:8000/admin` in your browser to log into django admin
 system.
 
 You're finished configuring.
