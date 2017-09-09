@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models import FileField, CharField, Model
 from django.urls import reverse
 
-from files.settings import UPLOADED_FILES_DIR
+from files.base_settings import UPLOADED_FILES_DIR
 
 
 class ShareableFile(Model):
