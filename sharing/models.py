@@ -36,11 +36,12 @@ class ShareableFile(Model):
         return super(ShareableFile, self).delete(*args, **kwargs)
 
     def save(self, *args, **kwargs):
-        super(ShareableFile, self).save(*args, **kwargs)
         if not self.name:
             self.name = os.path.basename(self.file.name)
+
         if not self.hash:
             self.hash = self.compute_hash()
+
         return super(ShareableFile, self).save(*args, **kwargs)
 
     def get_raw_url(self):

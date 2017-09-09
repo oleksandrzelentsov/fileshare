@@ -30,6 +30,7 @@ ALLOWED_HOSTS = ['localtest.me', 'localhost']
 
 INSTALLED_APPS = [
     'sharing',
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
