@@ -3,8 +3,31 @@ import json
 from django.contrib.auth import logout, authenticate, login
 from django.http import JsonResponse
 from django.views import View
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 
+from sharing.api.serializers import ShareableFileListSerializer
 from sharing.models import ShareableFile
+
+
+class ShareableFileListView(ListAPIView):
+    """
+    get:
+    File list of logged in user.
+
+    post:
+    Create new file.
+    """
+    queryset = ShareableFile.objects.all()
+    serializer_class = ShareableFileListSerializer
+
+
+class ShareableFileDetailView(RetrieveAPIView):
+    """
+        get:
+        Get file of logged in user.
+    """
+    queryset = ShareableFile.objects.all()
+    serializer_class = ShareableFileListSerializer
 
 
 class LoginView(View):
