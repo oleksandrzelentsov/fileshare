@@ -1,4 +1,4 @@
-from files.settings import *
+from files.base_settings import *
 
 
 DATABASES = {

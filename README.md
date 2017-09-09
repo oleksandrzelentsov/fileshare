@@ -16,25 +16,25 @@ virtualenv -p python3.6 env
 ```bash
 pip install -r requirements.txt
 ```
-3. Create `files/local_settings.py` and edit it to your needs (before
+3. Create `files/settings.py` and edit it to your needs (before
 that install postgresql database and user for it):
 ```bash
-cp files/local_settings_example.py files/local_settings.py
-nano files/local_settings.py
+cp files/settings_example.py files/settings.py
+nano files/settings.py
 ```
-4. Using created `local_settings` file run migrations:
+4. Run migrations:
 ```bash
-DJANGO_SETTINGS_MODULE=files.local_settings python manage.py migrate
+python manage.py migrate
 ```
 You have to have no errors.
 5. Run server to check if everything works:
 ```bash
-DJANGO_SETTINGS_MODULE=files.local_settings python manage.py runserver
+python manage.py runserver
 ```
 6. Press Ctrl+C to terminate the server and create super user for your
 instance:
 ```bash
-DJANGO_SETTINGS_MODULE=files.local_settings python manage.py createsuperuser
+python manage.py createsuperuser
 ```
 And answer all the questions.
 
