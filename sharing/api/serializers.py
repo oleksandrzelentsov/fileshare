@@ -23,3 +23,14 @@ class ShareableFileDetailSerializer(ModelSerializer):
             'get_raw_url',
             'public',
         ]
+
+
+class ShareableFileCreateSerializer(ModelSerializer):
+    class Meta:
+        model = ShareableFile
+        read_only_fields = ('user', )
+        fields = [
+            'file',
+            'user',
+            'public',
+        ]
