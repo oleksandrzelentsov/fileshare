@@ -8,7 +8,7 @@ MIDDLEWARE += [
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 ALLOWED_HOSTS += [
-    'powerful-garden-18063.herokuapp.com',
+    'fileshare-oz.herokuapp.com',
 ]
 DEBUG = False
 
