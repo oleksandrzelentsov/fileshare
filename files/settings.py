@@ -4,10 +4,10 @@ from files.base_settings import *
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'fileshare',
-        'USER': 'oleksandr',
-        'PASSWORD': '383R5cix',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'NAME': os.environ.get('FILESHARE_DB_NAME'),
+        'USER': os.environ.get('FILESHARE_DB_USER'),
+        'PASSWORD': os.environ.get('FILESHARE_DB_PASSWORD'),
+        'HOST': os.environ.get('FILESHARE_DB_HOST'),
+        'PORT': os.environ.get('FILESHARE_DB_PORT'),
     }
 }
