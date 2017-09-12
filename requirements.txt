@@ -13,3 +13,5 @@ coreschema==0.0.4
 itypes==1.1.0
 uritemplate==3.0.0
 urllib3==1.22
+gunicorn==19.7.1
+dj-database-url==0.4.2
